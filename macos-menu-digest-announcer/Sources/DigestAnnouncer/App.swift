@@ -190,10 +190,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, AVSpeechSynthesizerDel
         let text = parts.joined(separator: ". ")
         guard !text.isEmpty else { return }
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: AVSpeechSynthesisVoice.currentLanguageCode())
+        utterance.voice = bestVoice()
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate
         isSpeaking = true
         synthesizer.speak(utterance)
+    }
+
+    private func bestVoice() -> AVSpeechSynthesisVoice? {
+        let lang = AVSpeechSynthesisVoice.currentLanguageCode()
+        let langPrefix = String(lang.prefix(2))
+        let candidates = AVSpeechSynthesisVoice.speechVoices().filter {
+            $0.language == lang || $0.language.hasPrefix(langPrefix)
+        }
+        if candidates.isEmpty {
+            return AVSpeechSynthesisVoice(language: lang)
+        }
+        return candidates.max { a, b in
+            if a.quality.rawValue != b.quality.rawValue {
+                return a.quality.rawValue < b.quality.rawValue
+            }
+            return (a.language == lang ? 1 : 0) < (b.language == lang ? 1 : 0)
+        }
     }
 
     private func stripMarkdown(_ s: String) -> String {
