@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code (local, per-user; .claude/settings.json is fine to commit)
+.claude/settings.local.json
+
+# Secrets / env
+.env
+.env.local
+.env.*.local
+
+# Logs / temp
+*.log
+tmp/
+.tmp/
+
+# Per-app build artifacts (apps own their specifics; these are common ones)
+.build/
+build/
+dist/
+node_modules/
+__pycache__/
+*.pyc
