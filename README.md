@@ -1,6 +1,6 @@
 # Steady Playground
 
-A collection of client apps built on top of [Steady](https://runsteady.com)'s [API v2](https://runsteady.com/docs/api/) and [MCP server](https://runsteady.com/docs/mcp/). Menu bar apps, Tidbyt widgets, a rotary phone, whatever else fits.
+A collection of client apps built on top of [Steady](https://runsteady.com)'s [API v2](https://runsteady.com/docs/api/category/getting-started/) and [MCP server](https://runsteady.com/docs/article/143-mcp-server/). Menu bar apps, Tidbyt widgets, a rotary phone, whatever else fits.
 
 These are toys, not products. They exist because Steady is headless -- it runs wherever you do -- and the easiest way to show that is to actually show it. Fork them, break them, build your own.
 
@@ -10,7 +10,7 @@ Each app lives in its own top-level directory and stands on its own. No shared b
 
 | Directory | Form factor | Steady surface | What it does |
 |---|---|---|---|
-| [`macos-menu-digest-announcer/`](./macos-menu-digest-announcer) | macOS menu bar | API v2 | Click the icon, see — and hear — your latest digest entry. |
+| [`macos-menu-digest-announcer/`](./macos-menu-digest-announcer) | macOS menu bar | API v2 | Click the icon, see (and hear) your latest digest entry. |
 
 More on the way: Tidbyt, vintage phone, others as they come together.
 
@@ -18,11 +18,11 @@ More on the way: Tidbyt, vintage phone, others as they come together.
 
 The point of this repo is the next column of that table — yours. Start here:
 
-- **API v2 docs:** https://runsteady.com/docs/api/
-- **MCP server docs:** https://runsteady.com/docs/mcp/
+- **API v2 docs:** https://runsteady.com/docs/api/category/getting-started/
+- **MCP server docs:** https://runsteady.com/docs/article/143-mcp-server/
 - **Personal access tokens:** generate one from your Steady connections page.
 
-If you build something on Steady — useful, silly, weird, doesn't matter — open a PR adding a row to the table, or just send us a link.
+If you build something on Steady — useful, silly, weird, doesn't matter -- open a PR adding a row to the table, or just send us a link.
 
 ## Conventions
 
