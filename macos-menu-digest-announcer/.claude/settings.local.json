@@ -4,7 +4,8 @@
       "Bash(chmod +x /Users/henrypoydar/Developer/steady/playground/digest-announcer/build.sh)",
       "Bash(swift --version)",
       "Bash(swift build *)",
-      "Bash(./build.sh *)"
+      "Bash(./build.sh *)",
+      "Bash(open \".build/Digest Announcer.app\")"
     ]
   }
 }
