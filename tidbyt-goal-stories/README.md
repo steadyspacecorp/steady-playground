@@ -1,8 +1,8 @@
 # Steady Goal Stories (Tidbyt)
 
-A [Tidbyt](https://tidbyt.com) app that shows every top-level
-[Steady](https://runsteady.com) goal you can see as a stack of horizontal
-progress bars.
+A [Tidbyt](https://tidbyt.com) app that shows the top-level
+[Steady](https://runsteady.com) goals for your "My teams" view as a stack
+of horizontal progress bars.
 
 ![Preview](preview.png)
 
@@ -27,11 +27,15 @@ centered whether you have 1 goal or 12.
 
 On each render the app:
 
-1. `GET /goals` to list every goal the token can see.
-2. Keeps only goals where `parent` is null.
-3. For each, `GET /goals/<id>/goal-updates?per_page=1` to fetch the latest
+1. `GET /me` to get the PAT user's teams.
+2. `GET /goals?team_ids[]=…` to list goals involving any of those teams —
+   the same scope as the web UI's "My teams" filter.
+3. Keeps only goals where `parent` is null.
+4. Sorts by `end_date ASC, title ASC` (matching `Goal.for_index` in the
+   Rails app), so soonest-due goals come first.
+5. For each, `GET /goals/<id>/goal-updates?per_page=1` to fetch the latest
    update — that's where `progress` and `confidence_description` come from.
-4. Lays the bars out vertically with auto-tuned heights.
+6. Lays the bars out vertically with auto-tuned heights.
 
 Goals and their updates change daily, not minute-by-minute, so each response
 is cached for 5 minutes.
@@ -44,8 +48,8 @@ In the Tidbyt mobile app you set one thing:
 | ----- | ----------- |
 | Personal access token | A Steady PAT (starts with `steady_pat_`), created in Steady settings. |
 
-The token's visibility determines which goals appear — there's no team
-filter.
+The app uses your PAT's user identity to mirror the UI's "My teams" view —
+no team picker.
 
 ## Develop
 

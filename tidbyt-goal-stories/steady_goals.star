@@ -1,8 +1,8 @@
 """
 Steady Goal Stories — a Tidbyt app.
 
-Shows every top-level Steady goal visible to the token as a vertical stack
-of horizontal progress bars:
+Shows the top-level Steady goals for the token's "my teams" view as a
+vertical stack of horizontal progress bars:
 
   red     off track
   orange  at risk
@@ -51,8 +51,18 @@ def main(config):
         "Accept": "application/json",
     }
 
+    # Match the UI's "My teams" view: only goals involving teams the PAT's
+    # person is on. /me returns the person with their teams attached.
+    me_resp = http.get(API_BASE + "/me", headers = headers, ttl_seconds = GOALS_TTL)
+    if me_resp.status_code != 200:
+        return message("Me error %d" % me_resp.status_code)
+    team_ids = [t["id"] for t in me_resp.json().get("teams", [])]
+    if not team_ids:
+        return message("No teams")
+
+    team_query = "&".join(["team_ids%5B%5D=" + tid for tid in team_ids])
     goals_resp = http.get(
-        API_BASE + "/goals?per_page=50",
+        "{}/goals?per_page=50&{}".format(API_BASE, team_query),
         headers = headers,
         ttl_seconds = GOALS_TTL,
     )
@@ -64,6 +74,13 @@ def main(config):
     top_level = [g for g in goals_resp.json() if g.get("parent") == None]
     if not top_level:
         return message("No top-level goals")
+
+    # Match the web UI ordering (`Goal.for_index`): end_date ASC, title ASC,
+    # with missing end dates sorted to the end.
+    top_level = sorted(
+        top_level,
+        key = lambda g: (g.get("end_date") or "9999-12-31", (g.get("title") or "").lower()),
+    )
 
     height, gap = bar_dims(len(top_level))
     rows = []
