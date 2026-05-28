@@ -2,6 +2,8 @@
 
 A tiny macOS menu bar app that fetches your latest [Steady](https://runsteady.com) digest entry and reads it out loud when you click the icon.
 
+https://github.com/user-attachments/assets/94bd18e4-3993-432f-aac2-952da67d3e36
+
 ## What it does
 
 - Lives in the menu bar (no Dock icon).
