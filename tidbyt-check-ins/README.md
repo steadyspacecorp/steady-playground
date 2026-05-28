@@ -19,9 +19,7 @@ Shape encodes member type:
 - **Circle** — person
 - **Square** — agent
 
-> The Steady v2 API doesn't yet expose a person-vs-agent type, so every member
-> currently renders as a circle. The square path is wired up in `shape_for()` —
-> switch on the type field there once the API provides it.
+https://github.com/user-attachments/assets/bc52b6a8-8101-4c39-86ff-cf4f3fa76326
 
 ## How it works
 
