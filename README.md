@@ -4,6 +4,8 @@ A collection of client apps built on top of [Steady](https://runsteady.com)'s [A
 
 These are toys, not products. They exist because Steady is headless -- it runs wherever you do -- and the easiest way to show that is to actually show it. Fork them, break them, build your own.
 
+<img width="1364" height="797" alt="screen-and-tidbyt" src="https://github.com/user-attachments/assets/60987a97-e744-4bf3-9c47-c1e9b48942f4" />
+
 ## What's in here
 
 Each app lives in its own top-level directory and stands on its own. No shared build system, no shared tooling. Pick one, read its README, run it.
