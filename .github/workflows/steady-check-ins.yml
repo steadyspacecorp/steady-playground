@@ -1,0 +1,57 @@
+name: Steady Check-ins → Tidbyt
+
+# Renders the Tidbyt app and pushes it to the device every 30 minutes.
+# Runs in GitHub's cloud — no machine of your own needs to be on.
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   STEADY_PAT          Steady personal access token (steady_pat_…), read-only is enough
+#   TIDBYT_API_TOKEN    Tidbyt API token (Tidbyt app → Settings → Get API Key)
+#   TIDBYT_DEVICE_ID    Tidbyt device ID (same screen in the Tidbyt app)
+#
+# Optional repository variable:
+#   STEADY_TEAM_NAME    Team to display (defaults to "Data Science" below)
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"  # every 30 min (UTC; GitHub cron is best-effort)
+  workflow_dispatch: {}      # lets you trigger a push manually from the Actions tab
+
+permissions:
+  contents: read
+
+concurrency:
+  group: steady-check-ins-push
+  cancel-in-progress: false
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    env:
+      PIXLET_VERSION: v0.52.0
+      APP: tidbyt-check-ins/steady_check_ins.star
+      TEAM_NAME: ${{ vars.STEADY_TEAM_NAME || 'Data Science' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pixlet
+        run: |
+          curl -sSL -o /tmp/pixlet.tar.gz \
+            "https://github.com/tronbyt/pixlet/releases/download/${PIXLET_VERSION}/pixlet_${PIXLET_VERSION}_linux-amd64.tar.gz"
+          tar -xzf /tmp/pixlet.tar.gz -C /tmp
+          sudo install /tmp/pixlet /usr/local/bin/pixlet
+          pixlet version
+
+      - name: Render
+        run: |
+          pixlet render "$APP" \
+            pat="${{ secrets.STEADY_PAT }}" \
+            team_name="$TEAM_NAME" \
+            -o /tmp/steady_check_ins.webp
+
+      - name: Push to Tidbyt
+        run: |
+          pixlet push "${{ secrets.TIDBYT_DEVICE_ID }}" /tmp/steady_check_ins.webp \
+            --api-token "${{ secrets.TIDBYT_API_TOKEN }}" \
+            --url https://api.tidbyt.com \
+            --installation-id steadycheckins \
+            --background

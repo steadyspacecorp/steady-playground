@@ -1,0 +1,10 @@
+id: steady-check-ins
+name: Steady Check-ins
+summary: Team check-in status
+desc: >-
+  Shows today's Steady check-in status for a team as a grid of colored symbols:
+  yellow (no check-in yet), blue (checked in), green (intentions met), red
+  (blocked). Circles are people; squares are agents.
+author: Henry Poydar
+fileName: steady_check_ins.star
+packageName: steadycheckins
