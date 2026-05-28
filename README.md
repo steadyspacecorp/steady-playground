@@ -11,8 +11,9 @@ Each app lives in its own top-level directory and stands on its own. No shared b
 | Directory | Form factor | Steady surface | What it does |
 |---|---|---|---|
 | [`macos-menu-digest-announcer/`](./macos-menu-digest-announcer) | macOS menu bar | API v2 | Click the icon, see (and hear) your latest digest entry. |
+| [`tidbyt-check-ins/`](./tidbyt-check-ins) | Tidbyt (64×32 LED) | API v2 | A team's daily check-ins as a grid of colored dots — who's in, who met their intentions, who's blocked. |
 
-More on the way: Tidbyt, vintage phone, others as they come together.
+More on the way: vintage phone, others as they come together.
 
 ## Build your own
 
