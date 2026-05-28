@@ -1,0 +1,10 @@
+id: steady-goal-stories
+name: Steady Goal Stories
+summary: Team goals at a glance
+desc: >-
+  Shows a team's top-level Steady goals as a stack of horizontal progress
+  bars. Color encodes status (red off track, orange at risk, blue on track,
+  green complete); bar width is the goal's progress percent.
+author: Henry Poydar
+fileName: steady_goals.star
+packageName: steadygoalstories
