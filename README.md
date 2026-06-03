@@ -14,6 +14,7 @@ Each app lives in its own top-level directory and stands on its own. No shared b
 |---|---|---|---|
 | [`claude-code-activity-summarizer/`](./claude-code-activity-summarizer) | Dockerized daemon | Webhooks | Summarizes your Claude Code sessions every few hours and posts the themes to Steady as activities. |
 | [`macos-menu-digest-announcer/`](./macos-menu-digest-announcer) | macOS menu bar | API v2 | Click the icon, see (and hear) your latest digest entry. |
+| [`macos-desktop-intentions/`](./macos-desktop-intentions) | macOS menu bar | API v2 | Display your intentions for the day right on your desktop. |
 | [`tidbyt-check-ins/`](./tidbyt-check-ins) | Tidbyt (64×32 LED) | API v2 | A team's daily check-ins as a grid of colored dots — who's in, who met their intentions, who's blocked. |
 | [`tidbyt-goal-stories/`](./tidbyt-goal-stories) | Tidbyt (64×32 LED) | API v2 | All visible top-level goals as stacked progress bars — color is status (off track/at risk/on track/complete), width is progress. |
 
