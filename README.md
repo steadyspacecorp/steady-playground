@@ -2,7 +2,7 @@
 
 A collection of client apps built on top of [Steady](https://runsteady.com)'s [API v2](https://runsteady.com/docs/api/category/getting-started/) and [MCP server](https://runsteady.com/docs/article/143-mcp-server/). Menu bar apps, activity sweepers, Tidbyt widgets, kiosks, whatever else fits.
 
-These are toys, not products. They exist because Steady is headless -- it runs wherever you do -- and the easiest way to show that is to actually show it. Fork them, break them, build your own.
+These are demos, not products. They exist because Steady is headless -- it runs wherever you do -- and the easiest way to show that is to actually show it. Fork them, break them, build your own.
 
 <img width="1364" height="797" alt="screen-and-tidbyt" src="https://github.com/user-attachments/assets/60987a97-e744-4bf3-9c47-c1e9b48942f4" />
 
