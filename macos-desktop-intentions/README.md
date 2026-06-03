@@ -4,7 +4,7 @@ A tiny macOS menu bar app that floats today's [Steady](https://runsteady.com)
 check-in intentions on your desktop, anchored to a corner of your screen like
 part of your wallpaper.
 
-https://github.com/user-attachments/assets/c3b50596-6928-45c6-8df5-f1c834ef0e05
+https://github.com/user-attachments/assets/a26607ce-5fa2-40bf-80d1-53865d913d41
 
 ## What it does
 
