@@ -1,0 +1,8 @@
+services:
+  summarizer:
+    build: .
+    env_file: .env
+    volumes:
+      - ${CLAUDE_PROJECTS_DIR:-~/.claude/projects}:/claude-projects:ro
+      - ./data:/data
+    restart: unless-stopped
