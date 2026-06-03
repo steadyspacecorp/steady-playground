@@ -16,7 +16,8 @@ PROJECTS_DIR="${PROJECTS_DIR:-/claude-projects}"
 DATA_DIR="${DATA_DIR:-/data}"
 STATE_FILE="$DATA_DIR/last_run"
 INTERVAL_HOURS="${INTERVAL_HOURS:-6}"
-SOURCE_URL="${SOURCE_URL:-https://runsteady.com}"
+SOURCE_URL="${SOURCE_URL:-}"
+USE_GIT_ORIGIN_SOURCE_URL="${USE_GIT_ORIGIN_SOURCE_URL:-true}"
 PROJECT_DIRS="${PROJECT_DIRS:-}"
 CLAUDE_MODEL="${CLAUDE_MODEL:-claude-sonnet-4-6}"
 
@@ -56,8 +57,23 @@ project_allowed() {
   return 1
 }
 
-# Build a per-project digest of session summaries and user prompts
+# Resolve a project's GitHub URL from its git origin remote, if it has one
+github_url() {
+  local origin
+  origin=$(git -C "$1" -c safe.directory='*' remote get-url origin 2>/dev/null) || return 1
+  case "$origin" in
+    git@github.com:*) origin="https://github.com/${origin#git@github.com:}" ;;
+    https://github.com/*) ;;
+    *) return 1 ;;
+  esac
+  printf '%s\n' "${origin%.git}"
+}
+
+# Build a per-project digest of session summaries and user prompts, plus a
+# project -> GitHub URL map from each repo's origin remote
 DIGEST_FILE="$WORK_DIR/digest.txt"
+URL_MAP="$WORK_DIR/urls.tsv"
+touch "$URL_MAP"
 for dir in "$PROJECTS_DIR"/*/; do
   [ -d "$dir" ] || continue
   name=$(basename "$dir")
@@ -65,6 +81,14 @@ for dir in "$PROJECTS_DIR"/*/; do
 
   files=$(find "$dir" -name '*.jsonl' -type f "${find_args[@]}")
   [ -z "$files" ] && continue
+
+  # Transcripts record the session's real cwd; use it to find the repo
+  if [ "$USE_GIT_ORIGIN_SOURCE_URL" = "true" ]; then
+    cwd=$(jq -r 'select(.cwd) | .cwd' $files 2>/dev/null | head -1 || true)
+    if [ -n "$cwd" ] && url=$(github_url "$cwd"); then
+      printf '%s\t%s\n' "$name" "$url" >> "$URL_MAP"
+    fi
+  fi
 
   {
     echo ""
@@ -112,7 +136,8 @@ sentence. Each description MUST be under 230 characters total — be ruthless
 about brevity.
 
 Output ONLY a JSON array (no markdown fences, no commentary):
-[{"description": "..."}]
+[{"project": "...", "description": "..."}]
+where project is the project name copied exactly from its "=== PROJECT:" header.
 
 If there is no meaningful activity, output [].
 
@@ -136,11 +161,16 @@ count=$(echo "$summaries" | jq 'length')
 echo "$(date -u +%FT%TZ) $count theme(s) found"
 
 echo "$summaries" | jq -c '.[]' | while read -r item; do
+  # Link to the project's GitHub repo when it has one, else SOURCE_URL;
+  # omit source_url entirely when neither is set
+  project=$(echo "$item" | jq -r '.project // empty')
+  url=$(awk -F'\t' -v p="$project" '$1 == p {print $2; exit}' "$URL_MAP")
   payload=$(jq -n \
     --arg email "${STEADY_EMAIL:-you@example.com}" \
-    --arg url "$SOURCE_URL" \
+    --arg url "${url:-$SOURCE_URL}" \
     --arg desc "$(echo "$item" | jq -r '.description[0:256]')" \
-    '{email: $email, source: "Claude Code", source_url: $url, description: $desc}')
+    '{email: $email, source: "Claude Code", description: $desc}
+     + (if $url != "" then {source_url: $url} else {} end)')
   if [ -n "$DRY_RUN" ]; then
     echo "--- would POST:"
     echo "$payload" | jq .
