@@ -11,6 +11,8 @@ Every `INTERVAL_HOURS` (default 6) it:
 3. Asks `claude -p` to identify the distinct themes of work per project
 4. Posts one Steady activity webhook per theme
 
+<img width="800" height="451" alt="CleanShot 2026-06-03 at 15 32 26" src="https://github.com/user-attachments/assets/ef908bdd-776c-421b-86e6-786e2ecadae0" />
+
 ## Setup
 
 1. Generate a long-lived token for headless Claude (uses your subscription):
