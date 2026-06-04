@@ -27,14 +27,18 @@ trap 'rm -rf "$WORK_DIR"' EXIT
 
 # Mark the start of this run; promoted to $STATE_FILE only on success so a
 # failed run gets retried over the same window.
-touch "$WORK_DIR/run_started"
+date -u +%FT%TZ > "$WORK_DIR/run_started"
 
 # Transcripts newer than the last successful run (or the last interval on
-# first run; dry runs always use the interval window)
+# first run; dry runs always use the interval window). Files are filtered by
+# mtime, but a session active across runs keeps appending to the same file,
+# so individual entries are also filtered by timestamp against $SINCE.
 if [ -z "$DRY_RUN" ] && [ -f "$STATE_FILE" ]; then
   find_args=(-newer "$STATE_FILE")
+  SINCE=$(cat "$STATE_FILE")
 else
   find_args=(-mmin "-$(( INTERVAL_HOURS * 60 ))")
+  SINCE=$(date -u -d "$INTERVAL_HOURS hours ago" +%FT%TZ)
 fi
 
 # Claude Code encodes project paths as directory names: /a/b.c -> -a-b-c
@@ -82,6 +86,24 @@ for dir in "$PROJECTS_DIR"/*/; do
   files=$(find "$dir" -name '*.jsonl' -type f "${find_args[@]}")
   [ -z "$files" ] && continue
 
+  entries=$(echo "$files" | while read -r f; do
+    jq -r --arg since "$SINCE" '
+      if .type == "summary" then "[session] \(.summary)"
+      elif .type == "user" and ((.isMeta // false) | not)
+        and ((.timestamp // "") >= $since) then
+        (.message.content
+          | if type == "string" then .
+            elif type == "array" then ([ .[] | select(.type? == "text") | .text ] | join(" "))
+            else "" end)
+        | select(length > 0)
+        | select(startswith("<") | not)
+        | select(startswith("[Request interrupted") | not)
+        | "[prompt] \(.[0:500])"
+      else empty end
+    ' "$f" 2>/dev/null || true
+  done | head -c 100000)
+  [ -z "$entries" ] && continue
+
   # Transcripts record the session's real cwd; use it to find the repo
   if [ "$USE_GIT_ORIGIN_SOURCE_URL" = "true" ]; then
     cwd=$(jq -r 'select(.cwd) | .cwd' $files 2>/dev/null | head -1 || true)
@@ -93,21 +115,7 @@ for dir in "$PROJECTS_DIR"/*/; do
   {
     echo ""
     echo "=== PROJECT: $name ==="
-    echo "$files" | while read -r f; do
-      jq -r '
-        if .type == "summary" then "[session] \(.summary)"
-        elif .type == "user" and ((.isMeta // false) | not) then
-          (.message.content
-            | if type == "string" then .
-              elif type == "array" then ([ .[] | select(.type? == "text") | .text ] | join(" "))
-              else "" end)
-          | select(length > 0)
-          | select(startswith("<") | not)
-          | select(startswith("[Request interrupted") | not)
-          | "[prompt] \(.[0:500])"
-        else empty end
-      ' "$f" 2>/dev/null || true
-    done | head -c 100000
+    printf '%s\n' "$entries"
   } >> "$DIGEST_FILE"
 done
 
