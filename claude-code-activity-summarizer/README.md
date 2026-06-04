@@ -1,6 +1,6 @@
 # Claude Code Activity Summarizer
 
-A daemon that periodically summarizes your Claude Code activity and posts it
+A daemon that periodically summarizes selected Claude Code sessions and posts it
 to [Steady](https://runsteady.com) as activities via webhook.
 
 Every `INTERVAL_HOURS` (default 6) it:
