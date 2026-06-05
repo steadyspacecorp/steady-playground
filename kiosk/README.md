@@ -27,6 +27,10 @@ The layout is responsive: side-by-side panels on a wide screen, stacked on a nar
 
 **Kiosk mode:** double-click anywhere on the page to go fullscreen (double-click again or Esc to exit). Or launch the browser chromeless yourself, e.g. `open -na "Google Chrome" --args --kiosk <url>` on macOS.
 
+| A team | My teams | All teams |
+| -- | -- | -- |
+| <img alt="Screenshot 2026-06-05 at 15 35 42" src="https://github.com/user-attachments/assets/2c22a16f-5d1a-4fb3-b4e1-c3686c02efbd" /> | <img alt="Screenshot 2026-06-05 at 15 32 23" src="https://github.com/user-attachments/assets/01c55f63-d489-4972-8ed0-5e7899c0a669" /> | <img alt="Screenshot 2026-06-05 at 15 42 21" src="https://github.com/user-attachments/assets/bcb9d76b-9719-4551-b000-83625c00ed0c" /> |
+
 ## How it works
 
 A zero-dependency Node server (`node:http` + global `fetch`, nothing to install) does all the talking to Steady, so the personal access token never reaches the browser. Every `POLL_SECONDS` it:
