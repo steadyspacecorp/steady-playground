@@ -8,6 +8,7 @@ These are demos, not products. They exist because Steady is headless -- it runs 
 
 <img width="2560" height="1440" alt="Screenshot 2026-06-05 at 15 32 23" src="https://github.com/user-attachments/assets/6d98ed1a-f4e8-41f1-b44a-c33bb4b2d744" />
 
+
 **Tidbyt goals display:**
 
 <img width="1364" height="797" alt="screen-and-tidbyt" src="https://github.com/user-attachments/assets/60987a97-e744-4bf3-9c47-c1e9b48942f4" />
