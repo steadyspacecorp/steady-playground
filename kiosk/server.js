@@ -269,7 +269,11 @@ const server = http.createServer(async (req, res) => {
       const proto = req.headers["x-forwarded-proto"] || "http";
       body = body.toString().replaceAll("__BASE_URL__", `${proto}://${req.headers.host}`);
     }
-    res.writeHead(200, { "Content-Type": MIME[path.extname(file)] || "application/octet-stream" });
+    res.writeHead(200, {
+      "Content-Type": MIME[path.extname(file)] || "application/octet-stream",
+      // Always revalidate so a fresh deploy isn't paired with stale assets.
+      "Cache-Control": "no-cache",
+    });
     res.end(body);
   } catch {
     res.writeHead(404);

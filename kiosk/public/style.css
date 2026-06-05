@@ -22,7 +22,9 @@
   --no-update: #3a3f4a;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 /* Scale the whole UI with the display: the root font size tracks viewport
    height (~16px at 720p, ~32px at 1440p), and everything below is sized in
@@ -31,12 +33,17 @@ html {
   font-size: clamp(12px, 2.2vh, 32px);
 }
 
-html, body {
+html,
+body {
   margin: 0;
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
 }
 
 /* Lock the layout to the viewport so panels can never grow past it --
@@ -54,7 +61,9 @@ html, body {
     grid-template-columns: 1fr;
     height: auto; /* stacked mode scrolls instead */
   }
-  .panel { min-height: 85vh; } /* stacked panels each get a screenful to fill */
+  .panel {
+    min-height: 85vh;
+  } /* stacked panels each get a screenful to fill */
 }
 
 .panel {
@@ -101,7 +110,11 @@ html, body {
   font-size: calc(var(--cell, 5.5rem) * 0.26);
   color: var(--bg);
   border-radius: 50%; /* humans are circles */
-  transition: background-color 0.6s ease, color 0.6s ease, transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    background-color 0.6s ease,
+    color 0.6s ease,
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 /* corner badge: 🤖 for agents, mood emoji for humans */
@@ -114,19 +127,37 @@ html, body {
   filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.5));
 }
 
-.person.agent { border-radius: 18%; } /* agents are squares */
+.person.agent {
+  border-radius: 18%;
+} /* agents are squares */
 
-.person.status-blocked { animation: pulse 2s ease-in-out infinite; }
-
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgb(255 92 125 / 0.5); }
-  50% { box-shadow: 0 0 0 0.6rem rgb(255 92 125 / 0); }
+.person.status-blocked {
+  animation: pulse 2s ease-in-out infinite;
 }
 
-.person.status-pending    { background: var(--pending); color: var(--muted); }
-.person.status-checked_in { background: var(--checked-in); }
-.person.status-done       { background: var(--done); }
-.person.status-blocked    { background: var(--blocked); }
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(255 92 125 / 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 0.6rem rgb(255 92 125 / 0);
+  }
+}
+
+.person.status-pending {
+  background: var(--pending);
+  color: var(--muted);
+}
+.person.status-checked_in {
+  background: var(--checked-in);
+}
+.person.status-done {
+  background: var(--done);
+}
+.person.status-blocked {
+  background: var(--blocked);
+}
 
 /* --- goal bars ------------------------------------------------------ */
 
@@ -146,29 +177,43 @@ html, body {
   background: var(--track);
   border-radius: 0.5rem;
   overflow: hidden;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
-
 
 .goal .fill {
   position: absolute;
   inset: 0 auto 0 0;
   border-radius: 0.5rem;
   min-width: 0.5rem;
-  transition: width 0.8s ease, background-color 0.8s ease;
+  transition:
+    width 0.8s ease,
+    background-color 0.8s ease;
 }
 
 /* entrance: new shapes/bars pop in, then transitions take over */
-.person.enter, .goal.enter {
+.person.enter,
+.goal.enter {
   opacity: 0;
   transform: scale(0.85);
 }
 
-.goal.goal-off_track .fill { background: var(--off-track); }
-.goal.goal-at_risk   .fill { background: var(--at-risk); }
-.goal.goal-on_track  .fill { background: var(--on-track); }
-.goal.goal-complete  .fill { background: var(--complete); }
-.goal.goal-no_update .fill { background: var(--no-update); }
+.goal.goal-off_track .fill {
+  background: var(--off-track);
+}
+.goal.goal-at_risk .fill {
+  background: var(--at-risk);
+}
+.goal.goal-on_track .fill {
+  background: var(--on-track);
+}
+.goal.goal-complete .fill {
+  background: var(--complete);
+}
+.goal.goal-no_update .fill {
+  background: var(--no-update);
+}
 
 .goal .label {
   position: absolute;
@@ -214,14 +259,30 @@ html, body {
   margin-right: 0.35rem;
 }
 
-.dot.status-pending    { background: var(--pending); }
-.dot.status-checked_in { background: var(--checked-in); }
-.dot.status-done       { background: var(--done); }
-.dot.status-blocked    { background: var(--blocked); }
-.dot.goal-off_track    { background: var(--off-track); }
-.dot.goal-at_risk      { background: var(--at-risk); }
-.dot.goal-on_track     { background: var(--on-track); }
-.dot.goal-complete     { background: var(--complete); }
+.dot.status-pending {
+  background: var(--pending);
+}
+.dot.status-checked_in {
+  background: var(--checked-in);
+}
+.dot.status-done {
+  background: var(--done);
+}
+.dot.status-blocked {
+  background: var(--blocked);
+}
+.dot.goal-off_track {
+  background: var(--off-track);
+}
+.dot.goal-at_risk {
+  background: var(--at-risk);
+}
+.dot.goal-on_track {
+  background: var(--on-track);
+}
+.dot.goal-complete {
+  background: var(--complete);
+}
 
 #status-bar {
   position: fixed;
@@ -248,7 +309,8 @@ html, body {
   flex-shrink: 0;
 }
 
-#status-right a {
+#status-right a,
+#status-right a:visited {
   color: var(--muted);
 }
 
@@ -256,18 +318,27 @@ html, body {
   color: var(--text);
 }
 
-#message:not(:empty) { color: var(--blocked); }
+#message:not(:empty) {
+  color: var(--blocked);
+}
 
 #live {
   background: var(--done);
   animation: pulse-live 2.5s ease-in-out infinite;
 }
 
-#live.error { background: var(--blocked); }
+#live.error {
+  background: var(--blocked);
+}
 
 @keyframes pulse-live {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .empty {
