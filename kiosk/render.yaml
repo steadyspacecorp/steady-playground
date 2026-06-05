@@ -22,4 +22,4 @@ services:
       - key: TZ
         value: America/New_York # "today" for check-ins is resolved in this zone
       - key: POLL_SECONDS
-        value: "30"
+        value: "300"

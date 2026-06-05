@@ -68,7 +68,7 @@ docker run --rm -p 10000:10000 --env-file .env steady-kiosk
 | `STEADY_SCOPE` | `my` | `my` shows the token's own teams; `all` shows every team the token can see. Applies to both check-ins and goals. |
 | `STEADY_TEAM_IDS` | — | Comma-separated team UUIDs to display. Overrides `STEADY_SCOPE`. |
 | `TZ` | system | Timezone used to resolve "today" for check-ins. |
-| `POLL_SECONDS` | `30` | How often the server polls Steady and pushes to pages. |
+| `POLL_SECONDS` | `300` | How often the server polls Steady and pushes to pages. Each poll costs ~4 + (number of goals) API requests, against the PAT's 500-per-30-minute budget. |
 | `PORT` | `3000` (`10000` in Docker) | Port to listen on. |
 
 ## Deploy on Render

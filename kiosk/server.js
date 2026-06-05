@@ -20,7 +20,7 @@ import { fileURLToPath } from "node:url";
 
 const API_BASE = "https://service.steady.space/api/v2";
 const PORT = Number(process.env.PORT || 3000);
-const POLL_SECONDS = Number(process.env.POLL_SECONDS || 30);
+const POLL_SECONDS = Number(process.env.POLL_SECONDS || 300);
 const PAT = (process.env.STEADY_PAT || "").trim();
 const SCOPE = (process.env.STEADY_SCOPE || "my").trim().toLowerCase(); // "my" | "all"
 const TEAM_IDS = (process.env.STEADY_TEAM_IDS || "")
