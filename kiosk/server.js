@@ -263,7 +263,12 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
   try {
-    const body = await readFile(file);
+    let body = await readFile(file);
+    if (file.endsWith("index.html")) {
+      // Absolute URLs for the Open Graph tags, whatever host we're behind.
+      const proto = req.headers["x-forwarded-proto"] || "http";
+      body = body.toString().replaceAll("__BASE_URL__", `${proto}://${req.headers.host}`);
+    }
     res.writeHead(200, { "Content-Type": MIME[path.extname(file)] || "application/octet-stream" });
     res.end(body);
   } catch {
