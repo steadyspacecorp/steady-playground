@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Steady Kiosk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="panel" aria-labelledby="check-ins-heading">
+      <h2 id="check-ins-heading">Check-ins</h2>
+      <div id="people" class="people-grid"></div>
+      <footer class="legend">
+        <span><i class="dot status-pending"></i> Not checked in</span>
+        <span><i class="dot status-checked_in"></i> Checked in</span>
+        <span><i class="dot status-done"></i> Intentions met</span>
+        <span><i class="dot status-blocked"></i> Blocked</span>
+      </footer>
+    </section>
+
+    <section class="panel" aria-labelledby="goals-heading">
+      <h2 id="goals-heading">Goal stories</h2>
+      <div id="goals" class="goals-stack"></div>
+      <footer class="legend">
+        <span><i class="dot goal-off_track"></i> Off track</span>
+        <span><i class="dot goal-at_risk"></i> At risk</span>
+        <span><i class="dot goal-on_track"></i> On track</span>
+        <span><i class="dot goal-complete"></i> Complete</span>
+      </footer>
+    </section>
+  </main>
+
+  <div id="status-bar">
+    <span><i id="live" class="dot"></i> <span id="message"></span><span id="teams"></span></span>
+    <span id="updated-at"></span>
+  </div>
+
+  <script src="kiosk.js"></script>
+</body>
+</html>

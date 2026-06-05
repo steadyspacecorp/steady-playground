@@ -1,0 +1,264 @@
+/* Steady Kiosk — dark wall display.
+   Palette matches the Tidbyt playground apps. */
+
+:root {
+  --bg: #0e1116;
+  --panel: #161a21;
+  --track: #1f2228;
+  --text: #e8ebf2;
+  --muted: #828b9e;
+
+  /* check-in statuses */
+  --pending: #3a3f4a;
+  --checked-in: #514cfa;
+  --done: #5bcfc9;
+  --blocked: #ff5c7d;
+
+  /* goal statuses */
+  --off-track: #ff5c7d;
+  --at-risk: #ffb459;
+  --on-track: #514cfa;
+  --complete: #5bcfc9;
+  --no-update: #3a3f4a;
+}
+
+* { box-sizing: border-box; }
+
+/* Scale the whole UI with the display: the root font size tracks viewport
+   height (~16px at 720p, ~32px at 1440p), and everything below is sized in
+   rem, so a big monitor gets proportionally bigger type, bars, and spacing. */
+html {
+  font-size: clamp(12px, 2.2vh, 32px);
+}
+
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Lock the layout to the viewport so panels can never grow past it --
+   the check-in grid sizes its shapes to whatever space is actually visible. */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem 1.5rem 3.5rem;
+  height: 100vh;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    height: auto; /* stacked mode scrolls instead */
+  }
+  .panel { min-height: 85vh; } /* stacked panels each get a screenful to fill */
+}
+
+.panel {
+  background: var(--panel);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* allow shrinking to the viewport-locked row */
+  overflow: hidden;
+}
+
+.panel h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* --- check-in shapes ----------------------------------------------- */
+
+/* The grid fills the panel; kiosk.js sets --cols and --cell to the largest
+   square size that fits every member in both dimensions. */
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 8), 1fr);
+  grid-auto-rows: 1fr;
+  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.person {
+  position: relative;
+  width: var(--cell, 5.5rem);
+  height: var(--cell, 5.5rem);
+  place-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: calc(var(--cell, 5.5rem) * 0.26);
+  color: var(--bg);
+  border-radius: 50%; /* humans are circles */
+  transition: background-color 0.6s ease, color 0.6s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* corner badge: 🤖 for agents, mood emoji for humans */
+.person .mood {
+  position: absolute;
+  top: -0.3em;
+  right: -0.3em;
+  font-size: 1.2em; /* relative to the initials */
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.5));
+}
+
+.person.agent { border-radius: 18%; } /* agents are squares */
+
+.person.status-blocked { animation: pulse 2s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(255 92 125 / 0.5); }
+  50% { box-shadow: 0 0 0 0.6rem rgb(255 92 125 / 0); }
+}
+
+.person.status-pending    { background: var(--pending); color: var(--muted); }
+.person.status-checked_in { background: var(--checked-in); }
+.person.status-done       { background: var(--done); }
+.person.status-blocked    { background: var(--blocked); }
+
+/* --- goal bars ------------------------------------------------------ */
+
+.goals-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Bars share the panel height equally. */
+.goal {
+  position: relative;
+  flex: 1;
+  min-height: 1.5rem;
+  background: var(--track);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+
+.goal .fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 0.5rem;
+  min-width: 0.5rem;
+  transition: width 0.8s ease, background-color 0.8s ease;
+}
+
+/* entrance: new shapes/bars pop in, then transitions take over */
+.person.enter, .goal.enter {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+.goal.goal-off_track .fill { background: var(--off-track); }
+.goal.goal-at_risk   .fill { background: var(--at-risk); }
+.goal.goal-on_track  .fill { background: var(--on-track); }
+.goal.goal-complete  .fill { background: var(--complete); }
+.goal.goal-no_update .fill { background: var(--no-update); }
+
+.goal .label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--bg); /* dark text on the colored fill */
+}
+
+.goal .label .title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.goal .label .pct {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- legends & status bar ------------------------------------------- */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1.25rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  flex-shrink: 0; /* never crushed by an overfull panel */
+}
+
+.legend .dot {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  margin-right: 0.35rem;
+}
+
+.dot.status-pending    { background: var(--pending); }
+.dot.status-checked_in { background: var(--checked-in); }
+.dot.status-done       { background: var(--done); }
+.dot.status-blocked    { background: var(--blocked); }
+.dot.goal-off_track    { background: var(--off-track); }
+.dot.goal-at_risk      { background: var(--at-risk); }
+.dot.goal-on_track     { background: var(--on-track); }
+.dot.goal-complete     { background: var(--complete); }
+
+#status-bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* long team lists truncate rather than crowd the timestamp */
+#status-bar > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#updated-at { flex-shrink: 0; }
+
+#message:not(:empty) { color: var(--blocked); }
+
+#live {
+  background: var(--done);
+  animation: pulse-live 2.5s ease-in-out infinite;
+}
+
+#live.error { background: var(--blocked); }
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 0.9rem;
+}

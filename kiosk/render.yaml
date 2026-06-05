@@ -1,0 +1,25 @@
+# Render blueprint for the Steady Kiosk.
+#
+# Render reads blueprints from the repository root, so to deploy from this
+# monorepo copy this file to the repo root (or deploy from a fork that has
+# kiosk/ contents at its root and drop the rootDir lines).
+
+services:
+  - type: web
+    name: steady-kiosk
+    runtime: docker
+    rootDir: kiosk
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /up
+    envVars:
+      - key: STEADY_PAT
+        sync: false # prompted at deploy time; never committed
+      - key: STEADY_SCOPE
+        value: my # "my" = the token's teams; "all" = every team the token can see
+      - key: STEADY_TEAM_IDS
+        value: "" # optional: comma-separated team UUIDs; overrides STEADY_SCOPE
+      - key: TZ
+        value: America/New_York # "today" for check-ins is resolved in this zone
+      - key: POLL_SECONDS
+        value: "30"

@@ -1,0 +1,12 @@
+{
+  "name": "steady-kiosk",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --env-file=.env server.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
