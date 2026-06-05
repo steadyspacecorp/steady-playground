@@ -1,8 +1,8 @@
 # Render blueprint for the Steady Kiosk.
 #
-# Render reads blueprints from the repository root, so to deploy from this
-# monorepo copy this file to the repo root (or deploy from a fork that has
-# kiosk/ contents at its root and drop the rootDir lines).
+# When creating the Blueprint instance, set "Blueprint Path" to
+# kiosk/render.yaml -- Render defaults to looking for render.yaml at the
+# repo root, but this monorepo keeps each app's blueprint in its own folder.
 
 services:
   - type: web

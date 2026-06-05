@@ -69,7 +69,9 @@ docker run --rm -p 10000:10000 --env-file .env steady-kiosk
 
 ## Deploy on Render
 
-[`render.yaml`](./render.yaml) is a ready-to-go [blueprint](https://render.com/docs/blueprint-spec) for a Docker web service. Render reads blueprints from the repository root, so from this monorepo either copy `kiosk/render.yaml` to the root before creating the blueprint, or skip the blueprint and create a plain web service pointed at this repo with **Root Directory** set to `kiosk`. Either way, the only secret to set is `STEADY_PAT` — the blueprint marks it `sync: false` so Render prompts for it at deploy time.
+[`render.yaml`](./render.yaml) is a ready-to-go [blueprint](https://render.com/docs/blueprint-spec) for a Docker web service. In Render: **New → Blueprint**, point it at this repo (your fork, or the public URL), and set **Blueprint Path** to `kiosk/render.yaml`. The only secret to set is `STEADY_PAT` — the blueprint marks it `sync: false` so Render prompts for it at deploy time.
+
+Prefer skipping the blueprint? Create a plain web service pointed at this repo with **Root Directory** set to `kiosk` and set the env vars from the table above yourself.
 
 ## Endpoints
 
