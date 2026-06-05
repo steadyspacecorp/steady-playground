@@ -242,7 +242,19 @@ html, body {
   white-space: nowrap;
 }
 
-#updated-at { flex-shrink: 0; }
+#status-right {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+#status-right a {
+  color: var(--muted);
+}
+
+#status-right a:hover {
+  color: var(--text);
+}
 
 #message:not(:empty) { color: var(--blocked); }
 
