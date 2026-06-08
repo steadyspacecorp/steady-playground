@@ -14,6 +14,8 @@ This template uses Slack `mrkdwn`, not standard Markdown.
 
 *Follow-ups*
 - {owner-or-repo}: {specific follow-up} <{url}|{link label}>
+
+Digest key: github-activity-digest:steadyspacecorp/steady-playground:{YYYY-MM-DD}
 ```
 
 Rules:
@@ -24,5 +26,6 @@ Rules:
 - Use Slack links like `<url|label>`; do not use Markdown links like `[label](url)`.
 - Use `*Section*` labels; do not use Markdown headings.
 - Do not wrap the final Slack message in a code fence.
+- Include the `Digest key: ...` line exactly once as the final line in the posted message.
 - Prefer pull request assignee attribution for wins.
 - For problems, reference pull request numbers or repository scope rather than person names unless the team policy says otherwise.

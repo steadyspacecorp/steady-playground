@@ -18,9 +18,10 @@ schedule: "0 15 * * 1-5"
 
 ## Repository configuration
 
-Use this repository-specific value:
+Use these repository-specific values:
 
-- Slack channel: `<slack_channel_name>`
+- Slack channel: `#steady-playground`
+- Daily digest key format: `github-activity-digest:steadyspacecorp/steady-playground:{YYYY-MM-DD}`
 
 ## Scope
 
@@ -58,6 +59,16 @@ If no item meets the signal threshold, no-op silently.
 
 No-op silently when there has been no repository activity since the previous scheduled run.
 
+## Duplicate-post detection strategy
+
+Before posting, query recent Slack message history in `#steady-playground` from `00:00` to `23:59` UTC for the current digest date.
+
+Treat today's digest as already posted when any message in that window contains an exact line matching:
+
+`Digest key: github-activity-digest:steadyspacecorp/steady-playground:{YYYY-MM-DD}`
+
+If that exact digest key line already exists for today's date, no-op silently and do not post a second digest.
+
 ## Output format
 
 Use `references/digest-template.md`.
@@ -70,9 +81,10 @@ Limits:
 - no tables
 - no nested bullet lists
 - no unverified counts
+- include the digest key line exactly once as the final line of the message body
 
 ## Communication policy
 
-No-op silently when no item meets the signal threshold, duplicate detection shows today's digest already exists, or required configuration is missing.
+No-op silently when no item meets the signal threshold, duplicate-post detection finds today's digest key in the destination channel, or required configuration is missing.
 
 Do not post a digest asking for configuration or policy decisions. Surface blockers only when a configured safe Slack channel exists and human action is required.
