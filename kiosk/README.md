@@ -13,7 +13,7 @@ A one-page wall display for a [Steady](https://runsteady.com) account. Put it on
 | 🟢 green | Checked in and intentions met (`previous_completed`) |
 | 🔴 red | Blocked (`blocked`) — pulses |
 
-**Right — goal stories.** Goals as horizontal bars sharing the panel height, with subgoals indented under their parents. Width is the latest update's `progress`; color is its `confidence_description`:
+**Right — goal stories.** Goals as horizontal bars sharing the panel height, with subgoals indented under their parents. Width is the goal's `progress`; color is its `confidence_description`:
 
 | Color | Meaning |
 | ----- | ------- |
@@ -38,7 +38,7 @@ A zero-dependency Node server (`node:http` + global `fetch`, nothing to install)
 1. Resolves the team scope: `STEADY_TEAM_IDS` if set, otherwise `GET /teams` (every team the token can see) when `STEADY_SCOPE=all`, otherwise `GET /me` for the token's own teams.
 2. `GET /people` and keeps members of those teams — this is where `kind: human | agent` comes from.
 3. `GET /check-ins?since=<today>&until=<today>&team_ids[]=…` to color the shapes (and pick up moods). "Today" resolves in the `TZ` env var's zone.
-4. `GET /goals?team_ids[]=…`, orders them depth-first (top-level goals with their subgoals nested under them), and grabs each one's latest update for progress + confidence. Goals whose parent isn't visible to the token render as top-level.
+4. `GET /goals?team_ids[]=…`, orders them depth-first (top-level goals with their subgoals nested under them), and reads `progress` + `confidence` straight off each goal. Goals whose parent isn't visible to the token render as top-level.
 
 The aggregated snapshot is pushed to every connected page over SSE (`/events`). The page updates elements in place, so status changes fade and bars slide to their new width rather than redrawing.
 
@@ -68,7 +68,7 @@ docker run --rm -p 10000:10000 --env-file .env steady-kiosk
 | `STEADY_SCOPE` | `my` | `my` shows the token's own teams; `all` shows every team the token can see. Applies to both check-ins and goals. |
 | `STEADY_TEAM_IDS` | — | Comma-separated team UUIDs to display. Overrides `STEADY_SCOPE`. |
 | `TZ` | system | Timezone used to resolve "today" for check-ins. |
-| `POLL_SECONDS` | `300` | How often the server polls Steady and pushes to pages. Each poll costs ~4 + (number of goals) API requests, against the PAT's 500-per-30-minute budget. |
+| `POLL_SECONDS` | `300` | How often the server polls Steady and pushes to pages. Each poll costs a handful of API requests (teams, people, check-ins, goals — each paginated), against the PAT's 500-per-30-minute budget. |
 | `PORT` | `3000` (`10000` in Docker) | Port to listen on. |
 
 ## Deploy on Render

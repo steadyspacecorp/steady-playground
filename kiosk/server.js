@@ -3,8 +3,8 @@
 // Left side:  today's check-in status per team member, one shape each.
 //             Circles are humans, squares are agents (Person#kind).
 // Right side: goals as horizontal progress bars, subgoals indented under
-//             their parents. Width is the latest update's progress; color
-//             is its confidence.
+//             their parents. Width is the goal's progress; color is its
+//             confidence. Both come straight off the goal.
 //
 // The browser never sees the Steady PAT. This server polls the v2 REST API
 // (https://service.steady.space/api/v2) every POLL_SECONDS and pushes the
@@ -65,21 +65,6 @@ async function apiGet(apiPath, params = {}, attempt = 1) {
   return response.json();
 }
 
-// Run fn over items with at most `limit` requests in flight, preserving order.
-async function mapLimit(items, limit, fn) {
-  const results = new Array(items.length);
-  let next = 0;
-  await Promise.all(
-    Array.from({ length: Math.min(limit, items.length) }, async () => {
-      while (next < items.length) {
-        const index = next++;
-        results[index] = await fn(items[index]);
-      }
-    }),
-  );
-  return results;
-}
-
 async function getAll(apiPath, params = {}) {
   const all = [];
   for (let page = 1; page <= MAX_PAGES; page++) {
@@ -109,13 +94,12 @@ function checkInStatus(checkIn) {
   return "checked_in";
 }
 
-// Map a goal's latest update to [status, progress]. Progress 100 always
-// reads complete, regardless of confidence.
-function goalStatus(update) {
-  if (!update) return ["no_update", 0];
-  const progress = Number(update.progress) || 0;
+// Map a goal's current progress/confidence to [status, progress]. Progress 100
+// always reads complete, regardless of confidence.
+function goalStatus(goal) {
+  const progress = Number(goal.progress) || 0;
   if (progress >= 100) return ["complete", 100];
-  switch ((update.confidence_description || "").toLowerCase()) {
+  switch ((goal.confidence_description || "").toLowerCase()) {
     case "off track": return ["off_track", progress];
     case "at risk": return ["at_risk", progress];
     case "on track": return ["on_track", progress];
@@ -158,9 +142,8 @@ async function buildSnapshot() {
       mood: checkInsByPerson.get(p.id)?.mood || null,
     }));
 
-  const goals = await mapLimit(orderGoals(allGoals), 4, async ({ goal, depth }) => {
-    const [update] = await apiGet(`/goals/${goal.id}/goal-updates`, { per_page: 1 });
-    const [status, progress] = goalStatus(update);
+  const goals = orderGoals(allGoals).map(({ goal, depth }) => {
+    const [status, progress] = goalStatus(goal);
     return { id: goal.id, title: goal.title, progress, status, depth };
   });
 
