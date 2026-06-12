@@ -72,6 +72,7 @@ def main(config):
 
     today = today_in_tz(config)
     by_person = check_ins_by_person(headers, team_id, today)
+    kinds = kinds_by_person(headers)
 
     # Stable ordering so the grid doesn't shuffle between renders.
     people = sorted(people, key = lambda p: p["name"].lower())
@@ -79,7 +80,7 @@ def main(config):
     symbols = []
     for person in people:
         check_in = by_person.get(person["id"])
-        symbols.append((shape_for(person), status_color(check_in)))
+        symbols.append((shape_for(person, kinds), status_color(check_in)))
 
     return render.Root(
         max_age = CHECKINS_TTL,
@@ -114,6 +115,31 @@ def check_ins_by_person(headers, team_id, today):
         by_person[check_in["person"]["id"]] = check_in
     return by_person
 
+def kinds_by_person(headers):
+    """Return {person_id: kind} for the account, where kind is "human" or "agent".
+
+    The team endpoint only embeds a PersonRef (id + name), so the person-vs-agent
+    type comes from /people, which carries the full Person schema. Page through it
+    (50 per page is the API max) and fold every page into one map.
+    """
+    kinds = {}
+    page = 1
+    for _ in range(20):  # safety bound: up to 1000 people
+        resp = http.get(
+            "{}/people?per_page=50&page={}".format(API_BASE, page),
+            headers = headers,
+            ttl_seconds = TEAM_TTL,
+        )
+        if resp.status_code != 200:
+            break
+        batch = resp.json()
+        for person in batch:
+            kinds[person["id"]] = person.get("kind", "human")
+        if len(batch) < 50:
+            break
+        page += 1
+    return kinds
+
 def status_color(check_in):
     if check_in == None:
         return COLOR_PENDING
@@ -123,12 +149,14 @@ def status_color(check_in):
         return COLOR_DONE
     return COLOR_CHECKED
 
-def shape_for(person):
-    """Circle for people, square for agents.
+def shape_for(person, kinds):
+    """Square for agents, circle for humans, keyed off the Person `kind` field.
 
-    The v2 API does not yet expose a person-vs-agent type, so everyone renders
-    as a circle for now. When the API gains that field, switch on it here.
+    `kinds` maps person id -> "human"/"agent"; anyone missing (e.g. not returned
+    by /people) falls back to a circle.
     """
+    if kinds.get(person["id"]) == "agent":
+        return "square"
     return "circle"
 
 # --- layout -----------------------------------------------------------------
