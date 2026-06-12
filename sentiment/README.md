@@ -4,6 +4,8 @@ The day's check-ins as a living aurora. Point it at a [Steady](https://runsteady
 
 The catch — and the point — is that nothing here is an LLM. The text is scored by two small transformer models running on-CPU in the server process. No API calls, no tokens leaving the box.
 
+<img alt="Screenshot 2026-06-12 at 19 09 13" src="https://github.com/user-attachments/assets/8c367b79-c4bf-44f9-aaec-5309081acdd7" />
+
 ## What you're looking at
 
 **The aurora.** A full-screen WebGL shader driven by a handful of smoothed values from the latest check-ins:
