@@ -5,7 +5,7 @@ services:
     volumes:
       - ${CLAUDE_PROJECTS_DIR:-~/.claude/projects}:/claude-projects:ro
       # Repos mounted read-only at their host paths so each activity's
-      # source_url can point at the project's GitHub origin
+      # url can point at the project's GitHub origin
       - ${HOME}:${HOME}:ro
       - ./data:/data
     restart: unless-stopped

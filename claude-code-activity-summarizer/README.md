@@ -1,7 +1,7 @@
 # Claude Code Activity Summarizer
 
 A daemon that periodically summarizes selected Claude Code sessions and posts it
-to [Steady](https://runsteady.com) as activities via webhook.
+to [Steady](https://runsteady.com) as activities via the API.
 
 Every `INTERVAL_HOURS` (default 6) it:
 
@@ -9,9 +9,9 @@ Every `INTERVAL_HOURS` (default 6) it:
    the last run
 2. Builds a digest of session summaries and prompts, grouped by project
 3. Asks `claude -p` to identify the distinct themes of work per project
-4. Posts one Steady activity webhook per theme, linking each to the project's
-   GitHub repo (its `origin` remote) when it has one, else `SOURCE_URL` if set
-   (disable repo links with `USE_GIT_ORIGIN_SOURCE_URL=false`)
+4. Posts one Steady activity per theme (`POST /activities`), linking each to the
+   project's GitHub repo (its `origin` remote) when it has one, else `SOURCE_URL`
+   if set (disable repo links with `USE_GIT_ORIGIN_SOURCE_URL=false`)
 
 <img width="800" height="451" alt="CleanShot 2026-06-03 at 15 32 26" src="https://github.com/user-attachments/assets/ef908bdd-776c-421b-86e6-786e2ecadae0" />
 
@@ -27,11 +27,11 @@ Every `INTERVAL_HOURS` (default 6) it:
 
    ```sh
    cp .env.example .env
-   # fill in CLAUDE_CODE_OAUTH_TOKEN, STEADY_WEBHOOK_URL, STEADY_EMAIL
+   # fill in CLAUDE_CODE_OAUTH_TOKEN and STEADY_PAT
    ```
 
 3. Test it (dry run — summarizes the last `INTERVAL_HOURS` and prints the
-   webhook payloads without posting anything):
+   activity payloads without posting anything):
 
    ```sh
    docker compose build
@@ -58,11 +58,11 @@ docker compose run --rm summarizer once   # single real run (posts + updates sta
 
 ## Repo links
 
-Each activity's `source_url` points to the project's GitHub repo, resolved
+Each activity's `url` points to the project's GitHub repo, resolved
 from the repo's `origin` remote (transcripts record each session's working
 directory, and the home directory is mounted read-only into the container so
 the repo can be read). Projects without a GitHub origin fall back to
-`SOURCE_URL`, or post no `source_url` at all if that's unset.
+`SOURCE_URL`, or post no `url` at all if that's unset.
 
 Set `USE_GIT_ORIGIN_SOURCE_URL=false` in `.env` to skip repo resolution and
 always use `SOURCE_URL`.

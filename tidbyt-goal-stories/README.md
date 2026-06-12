@@ -16,7 +16,7 @@ of horizontal progress bars.
 | 🟢 green | Complete (progress 100) |
 | ⚫ gray | No update yet |
 
-**Bar width** is the goal's latest `progress` percent. Width is over the dim
+**Bar width** is the goal's `progress` percent. Width is over the dim
 track; the colored portion is how far the goal has gone.
 
 Only **top-level** goals (those with no parent) are shown — these are the
@@ -29,16 +29,16 @@ On each render the app:
 
 1. `GET /me` to get the PAT user's teams.
 2. `GET /goals?team_ids[]=…` to list goals involving any of those teams —
-   the same scope as the web UI's "My teams" filter.
+   the same scope as the web UI's "My teams" filter. Each goal carries its
+   own `progress` and `confidence_description`.
 3. Keeps only goals where `parent` is null.
 4. Sorts by `end_date ASC, title ASC` (matching `Goal.for_index` in the
    Rails app), so soonest-due goals come first.
-5. For each, `GET /goals/<id>/goal-updates?per_page=1` to fetch the latest
-   update — that's where `progress` and `confidence_description` come from.
-6. Lays the bars out vertically with auto-tuned heights.
+5. Lays the bars out vertically with auto-tuned heights.
 
-Goals and their updates change daily, not minute-by-minute, so each response
-is cached for 5 minutes.
+Goals change daily, not minute-by-minute, so each response is cached for 5
+minutes. The whole render is now two API calls (`/me` + `/goals`) regardless
+of how many goals you have.
 
 ## Configuration
 

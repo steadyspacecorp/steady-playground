@@ -1,6 +1,6 @@
 #!/bin/bash
 # Digest new Claude Code session transcripts, summarize themes with claude -p,
-# and post one Steady activity webhook per theme.
+# and post one Steady activity per theme via POST /activities.
 set -euo pipefail
 
 # DRY_RUN=1: summarize the last INTERVAL_HOURS and print payloads instead of
@@ -8,10 +8,10 @@ set -euo pipefail
 DRY_RUN="${DRY_RUN:-}"
 
 if [ -z "$DRY_RUN" ]; then
-  : "${STEADY_WEBHOOK_URL:?STEADY_WEBHOOK_URL is required}"
-  : "${STEADY_EMAIL:?STEADY_EMAIL is required}"
+  : "${STEADY_PAT:?STEADY_PAT is required}"
 fi
 
+STEADY_API_BASE="${STEADY_API_BASE:-https://service.steady.space/api/v2}"
 PROJECTS_DIR="${PROJECTS_DIR:-/claude-projects}"
 DATA_DIR="${DATA_DIR:-/data}"
 STATE_FILE="$DATA_DIR/last_run"
@@ -170,20 +170,20 @@ echo "$(date -u +%FT%TZ) $count theme(s) found"
 
 echo "$summaries" | jq -c '.[]' | while read -r item; do
   # Link to the project's GitHub repo when it has one, else SOURCE_URL;
-  # omit source_url entirely when neither is set
+  # omit url entirely when neither is set
   project=$(echo "$item" | jq -r '.project // empty')
   url=$(awk -F'\t' -v p="$project" '$1 == p {print $2; exit}' "$URL_MAP")
   payload=$(jq -n \
-    --arg email "${STEADY_EMAIL:-you@example.com}" \
     --arg url "${url:-$SOURCE_URL}" \
     --arg desc "$(echo "$item" | jq -r '.description[0:256]')" \
-    '{email: $email, source: "Claude Code", description: $desc}
-     + (if $url != "" then {source_url: $url} else {} end)')
+    '{group: "Claude Code", description: $desc}
+     + (if $url != "" then {url: $url} else {} end)')
   if [ -n "$DRY_RUN" ]; then
     echo "--- would POST:"
     echo "$payload" | jq .
   else
-    curl -fsS -X POST "$STEADY_WEBHOOK_URL" \
+    curl -fsS -X POST "$STEADY_API_BASE/activities" \
+      -H "Authorization: Bearer $STEADY_PAT" \
       -H "Content-Type: application/json" \
       -d "$payload" > /dev/null < /dev/null
     echo "$(date -u +%FT%TZ) posted: $(echo "$item" | jq -r '.description' | head -c 80)"

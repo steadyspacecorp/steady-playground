@@ -10,7 +10,7 @@ vertical stack of horizontal progress bars:
   green   complete (progress == 100)
   gray    no update yet
 
-Bar width = the goal's latest `progress` percent. Color = the goal's latest
+Bar width = the goal's `progress` percent. Color = the goal's
 `confidence_description`. Data comes from the Steady v2 REST API
 (https://service.steady.space/api/v2), authenticated with a personal access
 token (PAT).
@@ -36,10 +36,9 @@ COLOR_NO_UPDATE = "#3A3F4A"  # neutral — no update yet
 COLOR_TRACK = "#1F2228"      # bar background
 COLOR_MESSAGE = "#A6AEC0"
 
-# How long to trust each response. Goals & their updates change daily, not
-# minute-by-minute, so a longer TTL is fine and keeps the API call count down.
+# How long to trust each response. Goals change daily, not minute-by-minute,
+# so a longer TTL is fine and keeps the API call count down.
 GOALS_TTL = 300
-UPDATES_TTL = 300
 
 def main(config):
     pat = config.str("pat", "").strip()
@@ -83,36 +82,20 @@ def main(config):
     )
 
     height, gap = bar_dims(len(top_level))
-    rows = []
-    for goal in top_level:
-        update = latest_update(headers, goal["id"])
-        rows.append(bar_row(update, height, gap))
+    rows = [bar_row(goal, height, gap) for goal in top_level]
 
     return render.Root(
-        max_age = UPDATES_TTL,
+        max_age = GOALS_TTL,
         child = stack(rows),
     )
 
-def latest_update(headers, goal_id):
-    """Return the most recent GoalUpdate for a goal, or None if there are none."""
-    url = "{}/goals/{}/goal-updates?per_page=1".format(API_BASE, goal_id)
-    resp = http.get(url, headers = headers, ttl_seconds = UPDATES_TTL)
-    if resp.status_code != 200:
-        return None
-    updates = resp.json()
-    if not updates:
-        return None
-    return updates[0]
-
-def status_of(update):
-    """Map an update to (color, progress) for rendering. Progress=100 wins
+def status_of(goal):
+    """Map a goal to (color, progress) for rendering. Progress=100 wins
     over confidence so completed goals always read green."""
-    if update == None:
-        return COLOR_NO_UPDATE, 0
-    progress = update.get("progress", 0) or 0
+    progress = goal.get("progress", 0) or 0
     if progress >= 100:
         return COLOR_COMPLETE, 100
-    desc = (update.get("confidence_description") or "").lower()
+    desc = (goal.get("confidence_description") or "").lower()
     if desc == "off track":
         return COLOR_OFF_TRACK, progress
     if desc == "at risk":
@@ -135,9 +118,9 @@ def stack(rows):
         ),
     )
 
-def bar_row(update, height, gap):
+def bar_row(goal, height, gap):
     """Build one row: a colored bar over a dim track, with bottom padding."""
-    color, progress = status_of(update)
+    color, progress = status_of(goal)
     fill_w = int(progress * WIDTH // 100)
     if progress > 0 and fill_w == 0:
         fill_w = 1
