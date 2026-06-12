@@ -1,0 +1,16 @@
+{
+  "name": "steady-sentiment",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --env-file=.env server.js",
+    "warmup": "node -e \"import('./models.js').then((m) => m.loadModels()).then(() => console.log('models cached'))\""
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.5.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

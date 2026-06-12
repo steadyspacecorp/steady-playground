@@ -23,6 +23,7 @@ Each app lives in its own top-level directory and stands on its own. No shared b
 | [`kiosk/`](./kiosk) | Web page (Docker, Render-ready) | API v2 | A live wall display: today's check-ins as colored shapes (circles for humans, squares for agents) next to top-level goals as progress bars. Updates in place over SSE. |
 | [`macos-menu-digest-announcer/`](./macos-menu-digest-announcer) | macOS menu bar | API v2 | Click the icon, see (and hear) your latest digest entry. |
 | [`macos-desktop-intentions/`](./macos-desktop-intentions) | macOS menu bar | API v2 | Display your intentions for the day right on your desktop. |
+| [`sentiment/`](./sentiment) | Web page (Docker, Render-ready) | API v2 | Scores the day's check-ins with two small on-server transformer models (no LLMs) and renders the result as a generative WebGL aurora — sentiment sets the light, emotions set the palette, blockers pulse red. |
 | [`tidbyt-check-ins/`](./tidbyt-check-ins) | Tidbyt (64×32 LED) | API v2 | A team's daily check-ins as a grid of colored dots — who's in, who met their intentions, who's blocked. |
 | [`tidbyt-goal-stories/`](./tidbyt-goal-stories) | Tidbyt (64×32 LED) | API v2 | All visible top-level goals as stacked progress bars — color is status (off track/at risk/on track/complete), width is progress. |
 

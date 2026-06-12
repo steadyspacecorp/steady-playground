@@ -1,0 +1,27 @@
+# Render blueprint for Steady Sentiment.
+#
+# When creating the Blueprint instance, set "Blueprint Path" to
+# sentiment/render.yaml -- Render defaults to looking for render.yaml at the
+# repo root, but this monorepo keeps each app's blueprint in its own folder.
+
+services:
+  - type: web
+    name: steady-sentiment
+    runtime: docker
+    rootDir: sentiment
+    dockerfilePath: ./Dockerfile
+    plan: standard # two transformer models in memory; starter's 512MB is tight
+    healthCheckPath: /up
+    envVars:
+      - key: STEADY_PAT
+        sync: false # prompted at deploy time; never committed
+      - key: STEADY_SCOPE
+        value: my # "my" = the token's teams; "all" = every team the token can see
+      - key: STEADY_TEAM_IDS
+        value: "" # optional: comma-separated team UUIDs; overrides STEADY_SCOPE
+      - key: TZ
+        value: America/New_York # date math for the check-in window resolves in this zone
+      - key: POLL_SECONDS
+        value: "600"
+      - key: LOOKBACK_DAYS
+        value: "7"

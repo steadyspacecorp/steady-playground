@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Steady Sentiment</title>
+  <meta name="description" content="Your team's latest check-ins as a living aurora — sentiment sets the light, emotions set the palette, blockers pulse red. Scored by small on-server transformer models, no LLMs.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Steady Sentiment">
+  <meta property="og:description" content="Your team's latest check-ins as a living aurora — sentiment sets the light, emotions set the palette, blockers pulse red. Scored by small on-server transformer models, no LLMs.">
+  <meta property="og:url" content="__BASE_URL__/">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="aurora" aria-hidden="true"></canvas>
+
+  <footer id="readout" aria-live="polite">
+    <div class="headline">
+      <span id="score">·</span>
+      <span id="label"></span>
+      <span id="emotions" class="chips"></span>
+      <span id="blocked" class="chip blocked" hidden></span>
+    </div>
+    <p id="summary">Warming up…</p>
+    <p id="quotes"></p>
+  </footer>
+
+  <div id="status-bar">
+    <span><i id="live" class="dot"></i> <span id="message"></span><span id="teams"></span></span>
+    <span id="status-right">
+      <span id="models" class="muted"></span>
+      <a href="https://github.com/steadyspacecorp/steady-playground" target="_blank" rel="noopener">Source</a>
+      <span id="updated-at"></span>
+    </span>
+  </div>
+
+  <script src="aurora.js"></script>
+</body>
+</html>

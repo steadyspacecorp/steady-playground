@@ -1,0 +1,182 @@
+/* Steady Sentiment — full-bleed aurora with a readout strip.
+   Palette matches the kiosk and Tidbyt playground apps. */
+
+:root {
+  --bg: #0e1116;
+  --text: #e8ebf2;
+  --muted: #828b9e;
+  --blocked: #ff5c7d;
+  --live: #5bcfc9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Type scales with the display, like the kiosk: ~16px at 720p, ~32px at 1440p. */
+html {
+  font-size: clamp(12px, 2.2vh, 32px);
+}
+
+html,
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+}
+
+#aurora {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+/* --- the readout ------------------------------------------------------- */
+
+#readout {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 2.2rem;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: linear-gradient(transparent, rgba(10, 12, 18, 0.82) 35%);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+}
+
+.headline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+#score {
+  font-size: 2.4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+#label {
+  font-size: 1.3rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.chips {
+  display: inline-flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-size: 0.85rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(232, 235, 242, 0.25);
+  color: var(--text);
+  background: rgba(14, 17, 22, 0.45);
+  white-space: nowrap;
+}
+
+.chip.blocked {
+  border-color: var(--blocked);
+  color: var(--blocked);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+#summary {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text);
+  max-width: 70rem;
+}
+
+#quotes {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.quote {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- status bar (same bones as the kiosk's) ----------------------------- */
+
+#status-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.45rem 1.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: rgba(10, 12, 18, 0.82);
+}
+
+#status-bar a {
+  color: var(--muted);
+}
+
+#status-right {
+  display: inline-flex;
+  gap: 1rem;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.dot {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: var(--live);
+  vertical-align: baseline;
+}
+
+.dot.error {
+  background: var(--blocked);
+}
+
+@media (max-width: 700px) {
+  #quotes {
+    display: none; /* keep the small-screen readout to score + summary */
+  }
+  #models {
+    display: none;
+  }
+}
